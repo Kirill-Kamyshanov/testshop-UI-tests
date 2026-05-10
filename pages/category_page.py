@@ -31,7 +31,7 @@ class CategoryPage(BasePage):
         assert self.driver.find_element(*category_page_locators.list_type_loc).is_displayed()
 
 
-    def check_sort(self):
+    def check_sort_by_price(self):
         texts = [category_page_locators.sort_by_price_asc_text, category_page_locators.sort_by_price_desc_text]
 
         for text in texts:
@@ -50,12 +50,14 @@ class CategoryPage(BasePage):
             assert sequence_before == sequence_after, "Сортировка прошла некорректно"
 
 
-    def check_search(self, search_word: str):
+    def search_by_keyword(self, search_word: str):
 
         search_field = self.driver.find_element(*category_page_locators.search_field_loc)
         search_field.send_keys(search_word)
         self.driver.find_element(*category_page_locators.search_button_loc).click()
 
+
+    def check_searching_results(self, search_word: str):
         # ждём пока подгрузятся изменения
         initial_count = len(self.driver.find_elements(*category_page_locators.good_in_category_page_loc))
         self.wait.until(lambda d: len(d.find_elements(*category_page_locators.good_in_category_page_loc)) != initial_count)

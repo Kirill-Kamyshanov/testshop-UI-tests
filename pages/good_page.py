@@ -1,11 +1,12 @@
 from time import sleep
+from typing import Literal
 
 from selenium.webdriver import Keys
 
 from pages.base_page import BasePage
 from pages.locators import good_page_locators
-from pages.locators.common_locators import count_goods_in_card
-
+from pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
+from utils.project_ec import text_is_not_empty_in_element
 
 class GoodPage(BasePage):
 
@@ -13,7 +14,7 @@ class GoodPage(BasePage):
     def check_product_page_displayed(self):
 
         price = self.driver.find_element(*good_page_locators.price_area_loc)
-        assert price.text.startswith("$") or price.text.startswith("€"), "Цена товара не начинается с '$' или '€'"
+        assert price.text.startswith("$") or price.text.endswith("€"), "Цена товара не отображается в '$' или '€'"
 
         picture = self.driver.find_element(*good_page_locators.good_picture_loc)
         assert picture.is_displayed(), "Картинка товара не отображается"
@@ -32,7 +33,7 @@ class GoodPage(BasePage):
 
 
 
-    def check_add_in_card(self, count: int):
+    def add_goods_in_card(self, count: int):
         if not isinstance(count, int):
             raise TypeError("Ожидается числовой тип данных")
         if count < 0:
@@ -46,14 +47,48 @@ class GoodPage(BasePage):
 
         add_button = self.driver.find_element(*good_page_locators.add_to_cart_from_good_page_loc)
         add_button.click()
+        self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
 
-        cart_icon = self.driver.find_element(*count_goods_in_card) # товар добавляется, но не находится этот элемент (корзина с числом)
-        print(cart_icon.text)
+
+    def assert_goods_was_added_in_card(self, expected_count: int):
+        self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
+
+        popup_text = self.driver.find_element(*good_page_locators.popup_title)
+        assert popup_text.is_displayed(), "Попап с сообщением о добавлении товара не отобразился"
+
+        cart_icon = self.driver.find_element(*count_goods_in_card)
+
+        assert int(cart_icon.text) == expected_count, (
+            f"Неправильное значение кол-ва товаров у иконки корзины: {cart_icon.text}, ожидалось {expected_count}"
+        )
+
+    def change_currency_to_EUR(self):
+        self.driver.find_element(*change_currency_button).click()
+        self.wait.until(text_is_not_empty_in_element(change_to_eur_button))
+        self.driver.find_element(*change_to_eur_button).click()
+
+
+    def assert_price_displayed_in_currency(self, currency_sign: Literal["$", "€"]):
+        """Здесь поведение системы специфическое: если цена товара в долларах, знак ставится в начале, если в евро -
+        в конце. В реальном проекте уточнил зачем так сделано, а тут просто подстроился"""
+
+        allowed = ["$", "€"]
+        if currency_sign not in allowed:
+            raise ValueError(f"Некорректная валюта. Допустимые: {allowed}")
+
+        price = self.driver.find_element(*good_page_locators.price_area_loc)
+
+        if currency_sign == "$":
+            assert price.text.startswith(f"{currency_sign}"), f"Цена товара не в валюте'{currency_sign}'"
+        elif currency_sign == "€":
+            assert price.text.endswith(f"{currency_sign}"), f"Цена товара не в валюте'{currency_sign}'"
+
+
 
         # count_goods_in_card = (By.XPATH,
         #                        '//sup[@class="my_cart_quantity badge text-bg-primary position-absolute top-0 end-0 mt-n1 me-n1 rounded-pill "]')
 
-        sleep(2)
+        # sleep(2)
         # elem = self.driver.find_element(*count_goods_in_card)
         # print(elem.text)
 

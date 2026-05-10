@@ -16,10 +16,11 @@ def test_category_page_displayed(category_page):
 def test_category_page_sort(category_page):
     """Проверка сортировки товаров на странице категории по цене (по возрастанию/по убыванию)"""
     category_page.open_page("/category/desks-1")
-    category_page.check_sort()
+    category_page.check_sort_by_price()
 
 
 def test_category_page_search(category_page):
     """Проверка функции поиска товаров на странице категории"""
     category_page.open_page("/category/desks-1")
-    category_page.check_search("desk")
+    category_page.search_by_keyword("desk")
+    category_page.check_searching_results("desk")

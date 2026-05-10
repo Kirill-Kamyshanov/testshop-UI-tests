@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 
 
 
-
+# написать два теста
 
 def test_empty_cart_displayed(cart_page):
     """Проверка отображения элементов в пустой корзине"""
@@ -23,6 +23,15 @@ def test_empty_cart_displayed(cart_page):
 
 
 
-@pytest.mark.skip
-def test_cart_with_a_good(driver):
-    """Проверка отображения элементов в корзине после добавления товара"""
+def test_cart_with_a_good(good_page, cart_page):
+    """Проверка отображения элементов в обогащённой корзине после добавления товара"""
+    good_page.open_page("/furn-9999-office-design-software-7?category=9")
+    good_page.add_goods_in_card(1)
+    cart_page.open_page("/cart")
+    cart_page.check_enriched_cart_page()
+
+    sleep(4)
+
+
+def test_change_goods_count_in_cart(driver):
+    """Проверка изменения количества товаров в корзине (увеличение/уменьшение/полная очистка)"""

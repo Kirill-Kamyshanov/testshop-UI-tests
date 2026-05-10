@@ -17,6 +17,14 @@ def test_good_page_displayed(good_page):
 
 
 def test_add_good_in_card(good_page):
-    """Проверка добавления одного/нескольких товаров в корзину"""
+    """Проверка добавления одного/нескольких экземпляров товара в корзину со страницы карточки товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
-    good_page.check_add_in_card(4)
+    good_page.add_goods_in_card(4)
+    good_page.assert_goods_was_added_in_card(4)
+
+
+def test_change_currency_in_card(good_page):
+    """Проверка смены валюты в карточке товара"""
+    good_page.open_page("/furn-9999-office-design-software-7?category=9")
+    good_page.change_currency_to_EUR()
+    good_page.assert_price_displayed_in_currency("€")
