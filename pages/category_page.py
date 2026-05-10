@@ -1,8 +1,9 @@
 from time import sleep
 
+from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from pages.locators import category_page_locators
-
+from utils import project_ec
 
 class CategoryPage(BasePage):
 
@@ -27,8 +28,26 @@ class CategoryPage(BasePage):
 
 
     def check_sort(self):
+        texts = [category_page_locators.sort_by_price_asc_text, category_page_locators.sort_by_price_desc_text]
 
-        dd = self.driver.find_element(*category_page_locators.sort_by_dropdown_field)
-        dd.click()
+        for text in texts:
+            self.driver.find_element(*category_page_locators.sort_by_dropdown_field).click()
 
-        sleep(3)
+            # option = self.driver.find_element(By.XPATH, '//*[contains(text(), "Price - Low to High")]')
+            option = self.driver.find_element(By.XPATH, f'//*[contains(text(), "{text}")]')
+            # option = self.driver.find_element(By.XPATH, '//*[contains(text(), "Name (A-Z)")]')
+
+            self.wait.until(project_ec.text_is_not_empty_in_element((By.XPATH, f'//*[contains(text(), "{text}")]')))
+            option.click()
+
+            product_cards = self.driver.find_elements(*category_page_locators.good_in_category_page_loc)
+
+            sequence_before = [int(card.text[card.text.index("$") + 2:-3].replace(',', '')) for card in product_cards]
+
+            reverse = True if text == "Price - High to Low" else False
+            sequence_after = sorted(sequence_before, reverse=reverse)
+            assert sequence_before == sequence_after, "Сортировка прошла некорректно"
+
+
+
+

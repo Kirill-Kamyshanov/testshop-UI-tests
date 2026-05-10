@@ -19,8 +19,12 @@ search_button_loc = (By.XPATH, "//button[@type='submit' and @class='btn oe_searc
 
 # Блок sort by
 sort_by_text_loc = (By.CSS_SELECTOR, '[class="d-none d-lg-inline text-muted"]')
-sort_by_dropdown_field = (By.XPATH, '//a[@class="dropdown-toggle btn btn-light" and @aria-expanded="false"]')
+sort_by_dropdown_field = (By.XPATH, '//div[@class="o_sortby_dropdown dropdown dropdown_sorty_by d-none me-auto d-lg-inline-block"]/a[@class="dropdown-toggle btn btn-light"]')
+# sort_by_dropdown_field = (By.XPATH, '//a[@class="dropdown-toggle btn btn-light" and @aria-expanded="false"]')
+sort_by_price_asc_text = "Price - Low to High"
+sort_by_price_desc_text = "Price - High to Low"
 
 # Блок типов отображения
 grid_type_loc = (By.CSS_SELECTOR, '[title="Grid"]')
 list_type_loc = (By.CSS_SELECTOR, '[title="List"]')
+
