@@ -1,21 +1,16 @@
-from time import sleep
-
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.cart_page import CartPage
 from pages.category_page import CategoryPage
 from pages.good_page import GoodPage
-from selenium.webdriver.support import expected_conditions as EC
-
-from pages.locators.cart_locators import checkout_button_loc
 
 
 @pytest.fixture
 def driver():
     options = Options()
+    # options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
