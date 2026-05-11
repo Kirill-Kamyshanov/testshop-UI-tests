@@ -1,12 +1,7 @@
-from time import sleep
-
-from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-
 from pages.base_page import BasePage
 from pages.locators import category_page_locators
 from utils import project_ec
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class CategoryPage(BasePage):
@@ -31,7 +26,6 @@ class CategoryPage(BasePage):
         assert self.find(category_page_locators.grid_type_loc).is_displayed()
         assert self.find(category_page_locators.list_type_loc).is_displayed()
 
-
     def check_sort_by_price(self):
         """Сортировка товаров по цене(ASC/DESC)"""
 
@@ -52,7 +46,6 @@ class CategoryPage(BasePage):
 
             assert sequence_before == sequence_after, "Сортировка прошла некорректно"
 
-
     def search_by_keyword(self, search_word: str):
         """Поиск товаров по ключевому слову"""
 
@@ -60,13 +53,13 @@ class CategoryPage(BasePage):
         search_field.send_keys(search_word)
         self.find(category_page_locators.search_button_loc).click()
 
-
     def check_searching_results(self, search_word: str):
         """Проверка результатов поиска товаров по ключевому слову"""
 
         # ждём пока подгрузятся изменения
         initial_count = len(self.find_all(category_page_locators.good_in_category_page_loc))
-        self.wait.until(lambda d: len(d.find_elements(*category_page_locators.good_in_category_page_loc)) != initial_count)
+        self.wait.until(
+            lambda d: len(d.find_elements(*category_page_locators.good_in_category_page_loc)) != initial_count)
 
         # проверка
         product_cards = self.find_all(category_page_locators.good_in_category_page_loc)

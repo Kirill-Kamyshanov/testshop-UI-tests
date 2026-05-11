@@ -1,9 +1,7 @@
 import pytest
-from selenium import webdriver
-from time import sleep
 
 
-
+@pytest.mark.regression
 @pytest.mark.smoke
 def test_good_page_displayed(good_page):
     """Проверка отображения страницы товара"""
@@ -11,8 +9,8 @@ def test_good_page_displayed(good_page):
     good_page.check_product_page_displayed()
 
 
-
-
+@pytest.mark.regression
+@pytest.mark.smoke
 def test_add_good_in_card(good_page):
     """Проверка добавления одного/нескольких экземпляров товара в корзину со страницы карточки товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
@@ -20,6 +18,7 @@ def test_add_good_in_card(good_page):
     good_page.assert_goods_was_added_in_card(4)
 
 
+@pytest.mark.regression
 def test_change_currency_in_card(good_page):
     """Проверка смены валюты в карточке товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")

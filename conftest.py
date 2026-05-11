@@ -29,9 +29,7 @@ def add_test_good_in_cart(driver, good_page):
     """Фикстура для добавления тестового товара в корзину"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
     good_page.add_goods_in_card(1)
-    # sleep(1)
-    yield
-
+    return
 
 
 @pytest.fixture

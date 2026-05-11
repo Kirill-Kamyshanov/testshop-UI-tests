@@ -1,15 +1,11 @@
-from time import sleep
 from typing import Literal
-
-from selenium.webdriver import Keys
-
 from pages.base_page import BasePage
 from pages.locators import good_page_locators, common_locators
 from pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
 from utils.project_ec import text_is_not_empty_in_element
 
-class GoodPage(BasePage):
 
+class GoodPage(BasePage):
 
     def check_product_page_displayed(self):
         """Проверка отображения страницы товара"""
@@ -32,8 +28,6 @@ class GoodPage(BasePage):
         add_qty_area = self.find(good_page_locators.add_qty_area_loc)
         assert add_qty_area.is_displayed(), "Зона добавления товара не отображается на странице товара"
 
-
-
     def add_goods_in_card(self, count: int):
         """Добавление товара в корзину со страницы товара"""
 
@@ -42,16 +36,13 @@ class GoodPage(BasePage):
         if count < 0:
             raise ValueError("Ожидается число больше нуля")
 
-
         while count > 1:
             self.find(common_locators.add_one_button_loc).click()
-            count-= 1
-
+            count -= 1
 
         add_button = self.find(good_page_locators.add_to_cart_from_good_page_loc)
         add_button.click()
         self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
-
 
     def assert_goods_was_added_in_card(self, expected_count: int):
         """Проверка добавления товара в корзину со страницы товара"""
@@ -74,7 +65,6 @@ class GoodPage(BasePage):
         self.find(change_currency_button).click()
         self.wait.until(text_is_not_empty_in_element(change_to_eur_button))
         self.find(change_to_eur_button).click()
-
 
     def assert_price_displayed_in_currency(self, currency_sign: Literal["$", "€"]):
         """Здесь поведение системы специфическое: если цена товара в долларах, знак ставится в начале, если в евро -

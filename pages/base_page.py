@@ -1,20 +1,19 @@
 from selenium.webdriver.support.wait import WebDriverWait
 
+
 class BasePage:
     host = "http://testshop.qa-practice.com/shop"
     endpoint = None
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 5)
-
+        self.wait = WebDriverWait(driver, 12)
 
     def open_page(self, endpoint: str = None):
         """Открыть страницу"""
         endpoint = self.endpoint if not endpoint else endpoint
         endpoint = endpoint if endpoint.startswith('/') else f'/{endpoint}'
         return self.driver.get(f"{self.host}{endpoint}")
-
 
     def find(self, locator: tuple):
         """Найти один элемент по локатору"""

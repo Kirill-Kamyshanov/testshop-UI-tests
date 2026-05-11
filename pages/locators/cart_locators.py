@@ -1,4 +1,4 @@
-from selenium.webdriver.common.by import By, ByType
+from selenium.webdriver.common.by import By
 
 order_overview_loc = (By.XPATH, '//h3[text()="Order overview"]')
 
@@ -16,6 +16,5 @@ total_area_loc = (By.ID, "order_total")
 
 input_promo_field_loc = (By.CSS_SELECTOR, '[name="promo"]')
 apply_promocode_field_loc = (By.XPATH, '//a[@role="button" and text()="Apply"]')
-
 
 count_goods_in_cart_button_loc = (By.XPATH, '//input[@data-product-id="7"]')
