@@ -4,7 +4,7 @@ from typing import Literal
 from selenium.webdriver import Keys
 
 from pages.base_page import BasePage
-from pages.locators import good_page_locators
+from pages.locators import good_page_locators, common_locators
 from pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
 from utils.project_ec import text_is_not_empty_in_element
 
@@ -22,10 +22,10 @@ class GoodPage(BasePage):
         add_to_cart_button = self.driver.find_element(*good_page_locators.add_to_cart_from_good_page_loc)
         assert add_to_cart_button.is_displayed(), "Кнопка добавления товара в корзину не отображается на странице товара"
 
-        add_one_button = self.driver.find_element(*good_page_locators.add_one_button_loc)
+        add_one_button = self.driver.find_element(*common_locators.add_one_button_loc)
         assert add_one_button.is_displayed(), "Кнопка увеличения кол-ва товаров не отображается на странице товара"
 
-        remove_one_button = self.driver.find_element(*good_page_locators.remove_one_button_loc)
+        remove_one_button = self.driver.find_element(*common_locators.remove_one_button_loc)
         assert remove_one_button.is_displayed(), "Кнопка уменьшения кол-ва товаров не отображается на странице товара"
 
         add_qty_area = self.driver.find_element(*good_page_locators.add_qty_area_loc)
@@ -41,7 +41,7 @@ class GoodPage(BasePage):
 
 
         while count > 1:
-            self.driver.find_element(*good_page_locators.add_one_button_loc).click()
+            self.driver.find_element(*common_locators.add_one_button_loc).click()
             count-= 1
 
 
