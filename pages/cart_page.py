@@ -1,3 +1,5 @@
+from selenium.common import StaleElementReferenceException, NoSuchElementException
+
 from pages.locators import cart_locators
 from pages.base_page import BasePage
 from selenium.webdriver.support import expected_conditions as EC
@@ -39,8 +41,6 @@ class CartPage(BasePage):
         for _ in range(count):
             self.find(common_locators.add_one_button_loc).click()
 
-
-
     def remove_goods_in_cart(self, count: int = None):
         """Удалить 1/несколько/все единицы товара из корзины. Пока функция удаляет единицы одного экземпляра товара.
         Без аргументов удаляются все единицы товара
@@ -48,16 +48,14 @@ class CartPage(BasePage):
         if count:
             for _ in range(count):
                 self.find(common_locators.remove_one_button_loc).click()
-        else:
-            try:
-                actual_count_in_cart = self.find(cart_locators.count_goods_in_cart_button_loc)
-                while actual_count_in_cart.is_displayed():
-                    self.find(common_locators.remove_one_button_loc).click()
-            except:
-                pass
+            return
 
-
-
+        try:
+            actual_count_in_cart = self.find(cart_locators.count_goods_in_cart_button_loc)
+            while actual_count_in_cart.is_displayed():
+                self.find(common_locators.remove_one_button_loc).click()
+        except (NoSuchElementException, StaleElementReferenceException):
+            pass
 
     def check_goods_count_in_cart(self, count: int):
         """Проверка количества единиц товара в корзине"""
