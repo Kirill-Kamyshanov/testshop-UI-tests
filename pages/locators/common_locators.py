@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 # иконка корзины с количеством товаров (не 0)
-count_goods_in_card = (By.XPATH,
+count_goods_in_cart = (By.XPATH,
                        '//nav[@aria-label="Main"]//sup[@class="my_cart_quantity badge text-bg-primary position-absolute top-0 end-0 mt-n1 me-n1 rounded-pill"]')
 
 # Блок смены валюты (есть на разных страницах)

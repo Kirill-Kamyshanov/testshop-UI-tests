@@ -1,7 +1,7 @@
 from typing import Literal
 from pages.base_page import BasePage
 from pages.locators import good_page_locators, common_locators
-from pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
+from pages.locators.common_locators import count_goods_in_cart, change_currency_button, change_to_eur_button
 from utils.project_ec import text_is_not_empty_in_element
 
 
@@ -28,7 +28,7 @@ class GoodPage(BasePage):
         add_qty_area = self.find(good_page_locators.add_qty_area_loc)
         assert add_qty_area.is_displayed(), "Зона добавления товара не отображается на странице товара"
 
-    def add_goods_in_card(self, count: int):
+    def add_goods_in_cart(self, count: int):
         """Добавление товара в корзину со страницы товара"""
 
         if not isinstance(count, int):
@@ -42,17 +42,17 @@ class GoodPage(BasePage):
 
         add_button = self.find(good_page_locators.add_to_cart_from_good_page_loc)
         add_button.click()
-        self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
+        self.wait.until(text_is_not_empty_in_element(count_goods_in_cart))
 
-    def assert_goods_was_added_in_card(self, expected_count: int):
+    def assert_goods_was_added_in_cart(self, expected_count: int):
         """Проверка добавления товара в корзину со страницы товара"""
 
-        self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
+        self.wait.until(text_is_not_empty_in_element(count_goods_in_cart))
 
         popup_text = self.find(good_page_locators.popup_title)
         assert popup_text.is_displayed(), "Попап с сообщением о добавлении товара не отобразился"
 
-        cart_icon = self.find(count_goods_in_card)
+        cart_icon = self.find(count_goods_in_cart)
 
         assert int(cart_icon.text) == expected_count, (
             f"Неправильное значение кол-ва товаров у иконки корзины: {cart_icon.text}, ожидалось {expected_count}"

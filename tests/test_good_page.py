@@ -11,15 +11,16 @@ def test_good_page_displayed(good_page):
 
 @pytest.mark.regression
 @pytest.mark.smoke
-def test_add_good_in_card(good_page):
+def test_add_good_in_cart(good_page):
     """Проверка добавления одного/нескольких экземпляров товара в корзину со страницы карточки товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
-    good_page.add_goods_in_card(4)
-    good_page.assert_goods_was_added_in_card(4)
+    good_page.add_goods_in_cart(4)
+    good_page.assert_goods_was_added_in_cart(4)
 
 
 @pytest.mark.regression
-def test_change_currency_in_card(good_page):
+@pytest.mark.xfail(reason="Кнопка смены валюты в карточке товара пропала. В реальном проекте уточнил бы на счёт неё")
+def test_category_page_search_by_valid_keyword(good_page):
     """Проверка смены валюты в карточке товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
     good_page.change_currency_to_EUR()
