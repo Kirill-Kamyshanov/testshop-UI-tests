@@ -16,14 +16,15 @@ def driver():
 
     driver = webdriver.Chrome(options=options)
     driver.maximize_window()
-    return driver
+    yield driver
+    driver.quit()
 
 
 @pytest.fixture
 def add_test_good_in_cart(driver, good_page):
     """Фикстура для добавления тестового товара в корзину"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
-    good_page.add_goods_in_card(1)
+    good_page.add_goods_in_cart(1)
     return
 
 

@@ -1,3 +1,5 @@
+from typing import Literal
+
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
 from pages.locators import category_page_locators
@@ -26,25 +28,24 @@ class CategoryPage(BasePage):
         assert self.find(category_page_locators.grid_type_loc).is_displayed()
         assert self.find(category_page_locators.list_type_loc).is_displayed()
 
-    def check_sort_by_price(self):
+    def check_sort_by_price(self, direction: Literal["ASC", "DESC"]):
         """Сортировка товаров по цене(ASC/DESC)"""
+        text = category_page_locators.sort_by_price_asc_text \
+            if direction.lower() == "asc" else category_page_locators.sort_by_price_desc_text
 
-        texts = [category_page_locators.sort_by_price_asc_text, category_page_locators.sort_by_price_desc_text]
+        self.driver.find_element(*category_page_locators.sort_by_dropdown_field).click()
+        option = self.find((By.XPATH, f'//*[contains(text(), "{text}")]'))
 
-        for text in texts:
-            self.driver.find_element(*category_page_locators.sort_by_dropdown_field).click()
-            option = self.find((By.XPATH, f'//*[contains(text(), "{text}")]'))
+        self.wait.until(project_ec.text_is_not_empty_in_element((By.XPATH, f'//*[contains(text(), "{text}")]')))
+        option.click()
 
-            self.wait.until(project_ec.text_is_not_empty_in_element((By.XPATH, f'//*[contains(text(), "{text}")]')))
-            option.click()
+        product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
 
-            product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
+        sequence_before = [int(card.text[card.text.index("$") + 2:-3].replace(',', '')) for card in product_cards]
+        reverse = True if text == "Price - High to Low" else False
+        sequence_after = sorted(sequence_before, reverse=reverse)
 
-            sequence_before = [int(card.text[card.text.index("$") + 2:-3].replace(',', '')) for card in product_cards]
-            reverse = True if text == "Price - High to Low" else False
-            sequence_after = sorted(sequence_before, reverse=reverse)
-
-            assert sequence_before == sequence_after, "Сортировка прошла некорректно"
+        assert sequence_before == sequence_after, "Сортировка прошла некорректно"
 
     def search_by_keyword(self, search_word: str):
         """Поиск товаров по ключевому слову"""
