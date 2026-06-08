@@ -1,8 +1,8 @@
 from typing import Literal
-from pages.base_page import BasePage
-from pages.locators import good_page_locators, common_locators
-from pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
-from utils.project_ec import text_is_not_empty_in_element
+from test_UI_kkamyshanov_selenium.pages.base_page import BasePage
+from test_UI_kkamyshanov_selenium.pages.locators import good_page_locators, common_locators
+from test_UI_kkamyshanov_selenium.pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
+from test_UI_kkamyshanov_selenium.utils.project_ec import text_is_not_empty_in_element
 
 
 class GoodPage(BasePage):

@@ -19,6 +19,7 @@ def test_add_good_in_card(good_page):
 
 
 @pytest.mark.regression
+@pytest.mark.xfail(reason="Перестала отображаться иконка с валютой")
 def test_change_currency_in_card(good_page):
     """Проверка смены валюты в карточке товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")

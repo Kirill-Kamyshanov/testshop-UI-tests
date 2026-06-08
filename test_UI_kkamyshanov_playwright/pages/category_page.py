@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
-from pages.base_page import BasePage
-from pages.locators import category_page_locators
-from utils import project_ec
+from test_UI_kkamyshanov_selenium.pages.base_page import BasePage
+from test_UI_kkamyshanov_selenium.pages.locators import category_page_locators
+from test_UI_kkamyshanov_selenium.utils import project_ec
 
 
 class CategoryPage(BasePage):

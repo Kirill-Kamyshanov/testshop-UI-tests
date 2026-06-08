@@ -1,7 +1,6 @@
-from pages.locators import cart_locators
-from pages.base_page import BasePage
+from test_UI_kkamyshanov_selenium.pages.locators import cart_locators, common_locators
+from test_UI_kkamyshanov_selenium.pages.base_page import BasePage
 from selenium.webdriver.support import expected_conditions as EC
-from pages.locators import common_locators
 
 
 class CartPage(BasePage):
