@@ -1,26 +1,12 @@
 import pytest
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
-from test_UI_kkamyshanov_selenium.pages.cart_page import CartPage
-from test_UI_kkamyshanov_selenium.pages.category_page import CategoryPage
-from test_UI_kkamyshanov_selenium.pages.good_page import GoodPage
+from test_UI_kkamyshanov_playwright.pages.cart_page import CartPage
+from test_UI_kkamyshanov_playwright.pages.category_page import CategoryPage
+from test_UI_kkamyshanov_playwright.pages.good_page import GoodPage
 
 
 @pytest.fixture
-def driver():
-    options = Options()
-    # options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-
-    driver = webdriver.Chrome(options=options)
-    driver.maximize_window()
-    return driver
-
-
-@pytest.fixture
-def add_test_good_in_cart(driver, good_page):
+def add_test_good_in_cart(good_page):
     """Фикстура для добавления тестового товара в корзину"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
     good_page.add_goods_in_card(1)
@@ -28,15 +14,15 @@ def add_test_good_in_cart(driver, good_page):
 
 
 @pytest.fixture
-def good_page(driver):
-    return GoodPage(driver)
+def good_page(page):
+    return GoodPage(page)
 
 
 @pytest.fixture
-def cart_page(driver):
-    return CartPage(driver)
+def cart_page(page):
+    return CartPage(page)
 
 
 @pytest.fixture
-def category_page(driver):
-    return CategoryPage(driver)
+def category_page(page):
+    return CategoryPage(page)

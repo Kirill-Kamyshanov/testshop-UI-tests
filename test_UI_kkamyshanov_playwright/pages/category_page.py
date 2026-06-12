@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
-from test_UI_kkamyshanov_selenium.pages.base_page import BasePage
-from test_UI_kkamyshanov_selenium.pages.locators import category_page_locators
-from test_UI_kkamyshanov_selenium.utils import project_ec
-
+from test_UI_kkamyshanov_playwright.pages.base_page import BasePage
+from test_UI_kkamyshanov_playwright.pages.locators import category_page_locators
+from test_UI_kkamyshanov_playwright.utils import project_ec
+from playwright.sync_api import expect
 
 class CategoryPage(BasePage):
 
@@ -12,19 +12,18 @@ class CategoryPage(BasePage):
         product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
         assert len(product_cards) > 0, "На странице категории не отображено ни одного товара"
 
-        assert self.find(category_page_locators.filter_by_material_block_loc).is_displayed()
-
-        assert self.find(category_page_locators.search_field_loc).is_displayed()
-        assert self.find(category_page_locators.search_button_loc).is_displayed()
-
-        assert self.find(category_page_locators.price_range_text_loc).is_displayed()
+        expect(self.find(category_page_locators.filter_by_material_block_loc)).to_be_visible()
+        expect(self.find(category_page_locators.search_field_loc)).to_be_visible()
+        expect(self.find(category_page_locators.search_button_loc)).to_be_visible()
+        expect(self.find(category_page_locators.price_range_text_loc)).to_be_visible()
 
         sort_by_title = self.find(category_page_locators.sort_by_text_loc)
-        assert sort_by_title.text == "Sort By:", f"Текст не соответствует ожидаемому: {sort_by_title.text}"
-        assert self.find(category_page_locators.sort_by_dropdown_field).is_displayed()
+        expect(sort_by_title,f"Текст не соответствует ожидаемому: {sort_by_title.inner_text}").to_have_text("Sort By:")
+        expect(self.find(category_page_locators.sort_by_dropdown_field)).to_be_visible()
 
-        assert self.find(category_page_locators.grid_type_loc).is_displayed()
-        assert self.find(category_page_locators.list_type_loc).is_displayed()
+        expect(self.find(category_page_locators.grid_type_loc)).to_be_visible()
+        expect(self.find(category_page_locators.list_type_loc)).to_be_visible()
+
 
     def check_sort_by_price(self):
         """Сортировка товаров по цене(ASC/DESC)"""
@@ -32,8 +31,8 @@ class CategoryPage(BasePage):
         texts = [category_page_locators.sort_by_price_asc_text, category_page_locators.sort_by_price_desc_text]
 
         for text in texts:
-            self.driver.find_element(*category_page_locators.sort_by_dropdown_field).click()
-            option = self.find((By.XPATH, f'//*[contains(text(), "{text}")]'))
+            self.find(category_page_locators.sort_by_dropdown_field).click()
+            option = self.find(f'//*[contains(text(), "{text}")]')
 
             self.wait.until(project_ec.text_is_not_empty_in_element((By.XPATH, f'//*[contains(text(), "{text}")]')))
             option.click()
