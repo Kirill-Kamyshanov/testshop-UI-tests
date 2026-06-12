@@ -1,20 +1,27 @@
+import re
+from typing import Literal
+
 from selenium.webdriver.common.by import By
 from test_UI_kkamyshanov_playwright.pages.base_page import BasePage
 from test_UI_kkamyshanov_playwright.pages.locators import category_page_locators
 from test_UI_kkamyshanov_playwright.utils import project_ec
 from playwright.sync_api import expect
 
+from test_UI_kkamyshanov_selenium.pages import category_page
+
+
 class CategoryPage(BasePage):
 
     def check_category_page_displayed(self):
         """Проверка отображения страницы категории товара"""
+        good_in_category_page = self.find(category_page_locators.good_in_category_page_loc)
+        expect(good_in_category_page, "На странице категории не отображено ни одного товара").not_to_have_count(0)
 
-        product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
-        assert len(product_cards) > 0, "На странице категории не отображено ни одного товара"
 
-        expect(self.find(category_page_locators.filter_by_material_block_loc)).to_be_visible()
+        # self.page.wait_for_timeout(500)
         expect(self.find(category_page_locators.search_field_loc)).to_be_visible()
         expect(self.find(category_page_locators.search_button_loc)).to_be_visible()
+        expect(self.find(category_page_locators.filter_by_material_block_loc)).to_be_visible()
         expect(self.find(category_page_locators.price_range_text_loc)).to_be_visible()
 
         sort_by_title = self.find(category_page_locators.sort_by_text_loc)
@@ -25,42 +32,48 @@ class CategoryPage(BasePage):
         expect(self.find(category_page_locators.list_type_loc)).to_be_visible()
 
 
-    def check_sort_by_price(self):
+    def check_sort_by_price(self, direction: Literal["ASC", "DESC"]):
         """Сортировка товаров по цене(ASC/DESC)"""
+        # сортировка
+        text = category_page_locators.sort_by_price_asc_text \
+            if direction.lower() == "asc" else category_page_locators.sort_by_price_desc_text
 
-        texts = [category_page_locators.sort_by_price_asc_text, category_page_locators.sort_by_price_desc_text]
+        self.find(category_page_locators.sort_by_dropdown_field).click()
+        option = self.find(f'(//*[contains(text(), "{text}")])[1]')
+        option.click()
 
-        for text in texts:
-            self.find(category_page_locators.sort_by_dropdown_field).click()
-            option = self.find(f'//*[contains(text(), "{text}")]')
+        # Получение цен товаров после сортировки
+        expect(self.find(category_page_locators.good_in_category_page_loc)).not_to_have_count(0)
+        product_cards = self.find(category_page_locators.good_in_category_page_loc).all()
 
-            self.wait.until(project_ec.text_is_not_empty_in_element((By.XPATH, f'//*[contains(text(), "{text}")]')))
-            option.click()
+        sequence_after = []
+        for card in product_cards:
+            price_text = card.inner_text()
+            dollar_index = price_text.index("$")
+            price = int(price_text[dollar_index + 2:-3].replace(',', ''))
+            sequence_after.append(price)
 
-            product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
+        # Ожидаемый порядок
+        reverse = text == "Price - High to Low"
+        expected_sequence = sorted(sequence_after, reverse=reverse)
+        assert sequence_after == expected_sequence, f"Сортировка прошла некорректно. Ожидалось: {expected_sequence}, Получено: {sequence_after}"
 
-            sequence_before = [int(card.text[card.text.index("$") + 2:-3].replace(',', '')) for card in product_cards]
-            reverse = True if text == "Price - High to Low" else False
-            sequence_after = sorted(sequence_before, reverse=reverse)
 
-            assert sequence_before == sequence_after, "Сортировка прошла некорректно"
 
     def search_by_keyword(self, search_word: str):
         """Поиск товаров по ключевому слову"""
 
         search_field = self.find(category_page_locators.search_field_loc)
-        search_field.send_keys(search_word)
+        search_field.fill(search_word)
         self.find(category_page_locators.search_button_loc).click()
 
     def check_searching_results(self, search_word: str):
         """Проверка результатов поиска товаров по ключевому слову"""
-
         # ждём пока подгрузятся изменения
-        initial_count = len(self.find_all(category_page_locators.good_in_category_page_loc))
-        self.wait.until(
-            lambda d: len(d.find_elements(*category_page_locators.good_in_category_page_loc)) != initial_count)
+        initial_count = self.find(category_page_locators.good_in_category_page_loc).count()
+        expect(self.find(category_page_locators.good_in_category_page_loc)).not_to_have_count(initial_count)
 
-        # проверка
-        product_cards = self.find_all(category_page_locators.good_in_category_page_loc)
-        for product_card in product_cards:
-            assert search_word in product_card.text.lower(), f"Элемент не содержит слово-фильтр: {product_card.text.lower()}"
+        # проверка вхождения слова без учёта регистра
+        product_cards = self.find(category_page_locators.good_in_category_page_loc)
+        for product_card in product_cards.all():
+            expect(product_card, "Элемент не содержит слово-фильтр").to_contain_text(re.compile(search_word, re.IGNORECASE))
