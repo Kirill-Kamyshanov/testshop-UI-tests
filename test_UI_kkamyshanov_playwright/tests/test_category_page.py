@@ -19,7 +19,7 @@ def test_category_page_sort(category_page, direction):
 
 @pytest.mark.regression
 @pytest.mark.smoke
-def test_category_page_search(category_page):
+def test_category_page_search_by_valid_keyword(category_page):
     """Проверка функции поиска товаров на странице категории"""
     category_page.open_page("/category/desks-1")
     category_page.search_by_keyword("desk")

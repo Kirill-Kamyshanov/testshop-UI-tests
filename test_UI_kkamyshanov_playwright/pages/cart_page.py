@@ -28,29 +28,24 @@ class CartPage(BasePage):
         expect(self.find(cart_locators.apply_promocode_field_loc),
                "Кнопка подтверждения промокода не отображается").to_be_visible()
 
-
     def add_goods_in_cart(self, count: int):
-        """Добавить товар(ы) в корзину"""
+        """Увеличить количество добавленного товара в корзине на count единиц"""
         for _ in range(count):
             self.find(common_locators.add_one_button_loc).click()
 
-
-    def remove_goods_in_cart(self, count: int):
-        """Удалить товар(ы) из корзины"""
-        for _ in range(count):
-            self.find(common_locators.remove_one_button_loc).click()
-
-
-    def remove_all_goods_in_cart(self):
-        """Пока функция удаляет все единицы одного экземпляра товара"""
-        try:
-            actual_count_in_cart = self.find(cart_locators.count_goods_in_cart_button_loc)
-            while actual_count_in_cart.is_visible():
+    def remove_goods_in_cart(self, count: int = None):
+        """Удалить 1/несколько/все единицы товара из корзины. Пока функция удаляет единицы одного экземпляра товара.
+        Без аргументов удаляются все единицы товара
+        """
+        if count:
+            for _ in range(count):
                 self.find(common_locators.remove_one_button_loc).click()
-                self.page.wait_for_timeout(100) # Ожидание перед следующей проверкой, чтобы не было стандартного: 30 секунд
-        except:
-            pass
+            return
 
+        actual_count_in_cart = self.find(cart_locators.count_goods_in_cart_button_loc)
+        while actual_count_in_cart.is_visible():
+            self.find(common_locators.remove_one_button_loc).click()
+            self.page.wait_for_timeout(100)  # Ожидание перед след проверкой, чтобы не ждать 30 секунд-таймаута
 
     def check_goods_count_in_cart(self, count: str):
         """Проверка количества единиц товара в корзине"""

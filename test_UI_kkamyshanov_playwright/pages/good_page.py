@@ -1,9 +1,11 @@
+import re
 from typing import Literal
 from test_UI_kkamyshanov_playwright.pages.base_page import BasePage
 from test_UI_kkamyshanov_playwright.pages.locators import good_page_locators, common_locators
-from test_UI_kkamyshanov_playwright.pages.locators.common_locators import count_goods_in_card, change_currency_button, change_to_eur_button
-from test_UI_kkamyshanov_playwright.utils.project_ec import text_is_not_empty_in_element
+from test_UI_kkamyshanov_playwright.pages.locators.common_locators import count_goods_in_card, change_currency_button, \
+    change_to_eur_button
 from playwright.sync_api import expect
+
 
 class GoodPage(BasePage):
 
@@ -11,15 +13,14 @@ class GoodPage(BasePage):
         """Проверка отображения страницы товара"""
 
         price = self.find(good_page_locators.price_area_loc)
-        # expect(price.inner_text.startswith("$") or price.inner_text.endswith("€"))
-        assert price.text.startswith("$") or price.text.endswith("€"), "Цена товара не отображается в '$' или '€'"
+        expect(price, "Цена товара не отображается в '$' или '€'").to_have_text(re.compile(r"^\$.*|.*€$"))
 
         picture = self.find(good_page_locators.good_picture_loc)
         expect(picture, "Картинка товара не отображается").to_be_visible()
 
-
         add_to_cart_button = self.find(good_page_locators.add_to_cart_from_good_page_loc)
-        expect(add_to_cart_button, "Кнопка добавления товара в корзину не отображается на странице товара").to_be_visible()
+        expect(add_to_cart_button,
+               "Кнопка добавления товара в корзину не отображается на странице товара").to_be_visible()
 
         add_one_button = self.find(common_locators.add_one_button_loc)
         expect(add_one_button, "Кнопка увеличения кол-ва товаров не отображается на странице товара").to_be_visible()
@@ -29,7 +30,6 @@ class GoodPage(BasePage):
 
         add_qty_area = self.find(good_page_locators.add_qty_area_loc)
         expect(add_qty_area, "Зона добавления товара не отображается на странице товара").to_be_visible()
-
 
     def add_goods_in_card(self, count: int):
         """Добавление товара в корзину со страницы товара"""
@@ -49,23 +49,20 @@ class GoodPage(BasePage):
     def assert_goods_was_added_in_card(self, expected_count: int):
         """Проверка добавления товара в корзину со страницы товара"""
 
-        self.wait.until(text_is_not_empty_in_element(count_goods_in_card))
-
         popup_text = self.find(good_page_locators.popup_title)
         expect(popup_text, "Попап с сообщением о добавлении товара не отобразился").to_be_visible()
 
         cart_icon = self.find(count_goods_in_card)
+        (expect(cart_icon,
+                f"Неправильное значение кол-ва товаров у иконки корзины: {cart_icon.inner_text()}, "
+                f"ожидалось {expected_count}")
+         .to_have_text(str(expected_count)))
 
-        assert int(cart_icon.inner_text) == expected_count, (
-            f"Неправильное значение кол-ва товаров у иконки корзины: {cart_icon.inner_text}, ожидалось {expected_count}"
-        )
-
-    def change_currency_to_EUR(self):
+    def change_currency_to_eur(self):
         """Изменить валюту на EUR. Не стал делать универсальной,
         т.к. после изменения валюты на евро пропадает кнопка изменения валюты"""
 
         self.find(change_currency_button).click()
-        # self.wait.until(text_is_not_empty_in_element(change_to_eur_button))
         self.find(change_to_eur_button).click()
 
     def assert_price_displayed_in_currency(self, currency_sign: Literal["$", "€"]):
@@ -79,6 +76,6 @@ class GoodPage(BasePage):
         price = self.find(good_page_locators.price_area_loc)
 
         if currency_sign == "$":
-            assert price.text.startswith(f"{currency_sign}"), f"Цена товара не в валюте'{currency_sign}'"
+            expect(price, f"Цена товара не в валюте'{currency_sign}'").to_have_text(re.compile(r'^$.*'))
         elif currency_sign == "€":
-            assert price.text.endswith(f"{currency_sign}"), f"Цена товара не в валюте'{currency_sign}'"
+            expect(price, f"Цена товара не в валюте'{currency_sign}'").to_have_text(re.compile(r'.*€$'))

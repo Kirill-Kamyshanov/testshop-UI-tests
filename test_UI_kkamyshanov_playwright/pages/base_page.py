@@ -1,4 +1,3 @@
-
 class BasePage:
     host = "http://testshop.qa-practice.com/shop"
     endpoint = None
@@ -15,7 +14,3 @@ class BasePage:
     def find(self, locator: str):
         """Найти один элемент по локатору"""
         return self.page.locator(locator)
-
-    # def find_all(self, locator: str):
-    #     """Найти несколько элементов по локатору"""
-    #     return self.page.locator(locator)

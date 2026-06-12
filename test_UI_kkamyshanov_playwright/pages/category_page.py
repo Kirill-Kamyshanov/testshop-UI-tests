@@ -1,13 +1,9 @@
 import re
 from typing import Literal
 
-from selenium.webdriver.common.by import By
 from test_UI_kkamyshanov_playwright.pages.base_page import BasePage
 from test_UI_kkamyshanov_playwright.pages.locators import category_page_locators
-from test_UI_kkamyshanov_playwright.utils import project_ec
 from playwright.sync_api import expect
-
-from test_UI_kkamyshanov_selenium.pages import category_page
 
 
 class CategoryPage(BasePage):
@@ -17,7 +13,6 @@ class CategoryPage(BasePage):
         good_in_category_page = self.find(category_page_locators.good_in_category_page_loc)
         expect(good_in_category_page, "На странице категории не отображено ни одного товара").not_to_have_count(0)
 
-
         # self.page.wait_for_timeout(500)
         expect(self.find(category_page_locators.search_field_loc)).to_be_visible()
         expect(self.find(category_page_locators.search_button_loc)).to_be_visible()
@@ -25,12 +20,11 @@ class CategoryPage(BasePage):
         expect(self.find(category_page_locators.price_range_text_loc)).to_be_visible()
 
         sort_by_title = self.find(category_page_locators.sort_by_text_loc)
-        expect(sort_by_title,f"Текст не соответствует ожидаемому: {sort_by_title.inner_text}").to_have_text("Sort By:")
+        expect(sort_by_title, f"Текст не соответствует ожидаемому: {sort_by_title.inner_text}").to_have_text("Sort By:")
         expect(self.find(category_page_locators.sort_by_dropdown_field)).to_be_visible()
 
         expect(self.find(category_page_locators.grid_type_loc)).to_be_visible()
         expect(self.find(category_page_locators.list_type_loc)).to_be_visible()
-
 
     def check_sort_by_price(self, direction: Literal["ASC", "DESC"]):
         """Сортировка товаров по цене(ASC/DESC)"""
@@ -58,8 +52,6 @@ class CategoryPage(BasePage):
         expected_sequence = sorted(sequence_after, reverse=reverse)
         assert sequence_after == expected_sequence, f"Сортировка прошла некорректно. Ожидалось: {expected_sequence}, Получено: {sequence_after}"
 
-
-
     def search_by_keyword(self, search_word: str):
         """Поиск товаров по ключевому слову"""
 
@@ -76,4 +68,5 @@ class CategoryPage(BasePage):
         # проверка вхождения слова без учёта регистра
         product_cards = self.find(category_page_locators.good_in_category_page_loc)
         for product_card in product_cards.all():
-            expect(product_card, "Элемент не содержит слово-фильтр").to_contain_text(re.compile(search_word, re.IGNORECASE))
+            expect(product_card, "Элемент не содержит слово-фильтр").to_contain_text(
+                re.compile(search_word, re.IGNORECASE))

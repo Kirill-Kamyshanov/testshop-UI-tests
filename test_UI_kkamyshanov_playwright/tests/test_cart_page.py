@@ -3,7 +3,7 @@ import pytest
 
 @pytest.mark.regression
 @pytest.mark.smoke
-def test_empty_cart_displayed(cart_page):
+def test_cart_displays_correct_elements_after_adding_good(cart_page):
     """Проверка отображения элементов в пустой корзине"""
     cart_page.open_page()
     cart_page.check_empty_cart_page()
@@ -26,5 +26,5 @@ def test_change_goods_count_in_cart(good_page, cart_page, add_test_good_in_cart)
     cart_page.check_goods_count_in_cart("4")
     cart_page.remove_goods_in_cart(2)
     cart_page.check_goods_count_in_cart("2")
-    cart_page.remove_all_goods_in_cart()
+    cart_page.remove_goods_in_cart()
     cart_page.check_empty_cart_page()

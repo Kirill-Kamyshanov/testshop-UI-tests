@@ -23,5 +23,5 @@ def test_add_good_in_card(good_page):
 def test_change_currency_in_card(good_page):
     """Проверка смены валюты в карточке товара"""
     good_page.open_page("/furn-9999-office-design-software-7?category=9")
-    good_page.change_currency_to_EUR()
+    good_page.change_currency_to_eur()
     good_page.assert_price_displayed_in_currency("€")
