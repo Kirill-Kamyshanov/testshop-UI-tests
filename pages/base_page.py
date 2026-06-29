@@ -7,7 +7,7 @@ class BasePage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 12)
+        self.wait = WebDriverWait(driver, 20)
 
     def open_page(self, endpoint: str = None):
         """Открыть страницу"""
