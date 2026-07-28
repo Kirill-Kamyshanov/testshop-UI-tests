@@ -18,7 +18,7 @@ def test_add_good_in_cart(good_page):
     good_page.assert_goods_was_added_in_cart(4)
 
 
-@pytest.mark.regression
+@pytest.mark.extended
 @pytest.mark.xfail(reason="Кнопка смены валюты в карточке товара пропала. В реальном проекте уточнил бы на счёт неё")
 def test_category_page_search_by_valid_keyword(good_page):
     """Проверка смены валюты в карточке товара"""
