@@ -1,0 +1,70 @@
+
+name: Python autotests
+
+on: [push]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: run autotests
+    steps:
+      - name: Checkout autotests
+        uses: actions/checkout@v7
+      - name: Set up Python environment
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: run tests
+        run: pytest
+
+
+# Создаем файл в .github/workflows/python-app.yml
+
+#name: Python CI/CD
+#
+#on:
+#  # Запускаем при пуше в main или при создании PR
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
+#
+#jobs:
+#  build:
+#    # Указываем ОС для выполнения
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        # Клонируем репозиторий
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Python
+#        # Настраиваем окружение Python
+#        uses: actions/setup-python@v5
+#        with:
+#          # Указываем версию Python
+#          python-version: '3.11'
+#          # Включаем кэширование для pip
+#          cache: 'pip'
+#
+#      - name: Install dependencies
+#        # Устанавливаем зависимости
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+#
+#      - name: Run tests
+#        # Запускаем тесты
+#        run: |
+#          pytest
+#
+#      - name: Upload coverage reports
+#        # Опционально: загружаем отчеты о покрытии
+#        uses: codecov/codecov-action@v3
+#        with:
+#          file: coverage.xml
