@@ -1,3 +1,5 @@
+import random
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,6 +19,7 @@ def driver():
     driver = webdriver.Chrome(options=options)
     driver.maximize_window()
     yield driver
+    driver.save_screenshot(f"screenshot{random.randrange(1,1000)}.png")
     driver.quit()
 
 
