@@ -96,6 +96,19 @@ jobs:
         run: pytest -m extended --alluredir=allure-results
         continue-on-error: true
 
+      - name: Store allure results
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure-results
+          path:
+            allure-results
+          retention-days: 1
+
+
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    name: Generate report
       - name: Install java
         uses: actions/setup-java@v5 # скачать Java
         with:
@@ -105,6 +118,10 @@ jobs:
         run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.44.0/allure-2.44.0.tgz && sudo tar -zxvf allure-2.44.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.44.0/bin/allure /usr/bin/allure
       - name: Generate report
         run: allure generate -c allure-results -o allure-report # название вместо allure-report чтобы проще было публиковать на github Pages
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+
       - name: save allure report
         uses: actions/upload-artifact@v7 # экшен делает так, чтобы артефакты остались после запуска джобы (будут доступны к скачиванию на UI)
         with:
@@ -132,54 +149,3 @@ jobs:
       id: deployment
       uses: actions/deploy-pages@v4
 
-
-
-
-# Создаем файл в .github/workflows/python-app.yml
-
-#name: Python CI/CD
-#
-#on:
-#  # Запускаем при пуше в main или при создании PR
-#  push:
-#    branches:
-#      - main
-#  pull_request:
-#    branches:
-#      - main
-#
-#jobs:
-#  build:
-#    # Указываем ОС для выполнения
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout code
-#        # Клонируем репозиторий
-#        uses: actions/checkout@v4
-#
-#      - name: Set up Python
-#        # Настраиваем окружение Python
-#        uses: actions/setup-python@v5
-#        with:
-#          # Указываем версию Python
-#          python-version: '3.11'
-#          # Включаем кэширование для pip
-#          cache: 'pip'
-#
-#      - name: Install dependencies
-#        # Устанавливаем зависимости
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install -r requirements.txt
-#
-#      - name: Run tests
-#        # Запускаем тесты
-#        run: |
-#          pytest
-#
-#      - name: Upload coverage reports
-#        # Опционально: загружаем отчеты о покрытии
-#        uses: codecov/codecov-action@v3
-#        with:
-#          file: coverage.xml
