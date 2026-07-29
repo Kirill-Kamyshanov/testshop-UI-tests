@@ -73,13 +73,13 @@ jobs:
     - name: Download artifacts # скачать артефакт с прошлого степа
       uses: actions/download-artifact@v8
       with:
-        name: _site
-        path: ./_site
+        name: allure-report
+        path: ./allure-report
 
     - name: Upload Pages artifact # эти два степа публикуют этот артефакт на github Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./_site
+        path: ./allure-report
 
     - name: Deploy to Github Pages
       id: deployment
