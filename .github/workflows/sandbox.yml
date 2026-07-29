@@ -1,0 +1,88 @@
+# Рабочая версия без тренда
+
+name: Python autotests
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: choose tests set
+        required: true
+        type: choice
+        options:
+          - smoke
+          - regression
+          - extended
+          - all
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: run autotests
+    steps:
+      - name: Checkout autotests
+        uses: actions/checkout@v7
+      - name: Set up Python environment
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: run all tests
+        if: "github.event.inputs.deployment_target == 'all'"
+        run: pytest --alluredir=allure-results
+        continue-on-error: true
+      - name: run smoke tests
+        if: "github.event.inputs.deployment_target == 'smoke'"
+        run: pytest -m smoke --alluredir=allure-results
+        continue-on-error: true
+      - name: run regression tests
+        if: "github.event.inputs.deployment_target == 'regression'"
+        run: pytest -m regression --alluredir=allure-results
+        continue-on-error: true
+      - name: run extended tests
+        if: "github.event.inputs.deployment_target == 'extended'"
+        run: pytest -m extended --alluredir=allure-results
+        continue-on-error: true
+
+      - name: Install java
+        uses: actions/setup-java@v5 # скачать Java
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+      - name: Install allure
+        run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.44.0/allure-2.44.0.tgz && sudo tar -zxvf allure-2.44.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.44.0/bin/allure /usr/bin/allure
+      - name: Generate report
+        run: allure generate -c allure-results -o allure-report # название вместо allure-report чтобы проще было публиковать на github Pages
+      - name: save allure report
+        uses: actions/upload-artifact@v7 # экшен делает так, чтобы артефакты остались после запуска джобы (будут доступны к скачиванию на UI)
+        with:
+          name: allure-report
+          path: allure-report
+          retention-days: 1
+
+  publish-report:
+    name: Report publication
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+    - name: Download artifacts # скачать артефакт с прошлого степа
+      uses: actions/download-artifact@v8
+      with:
+        name: allure-report
+        path: ./allure-report
+
+    - name: Upload Pages artifact # эти два степа публикуют этот артефакт на github Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./allure-report
+
+    - name: Deploy to Github Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
