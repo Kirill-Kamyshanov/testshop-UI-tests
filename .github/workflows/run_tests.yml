@@ -40,7 +40,7 @@ jobs:
         run: pytest -m extended --alluredir=allure-results
 
       - name: Install java
-        uses: actions/setup-java@v6 # скачать Java
+        uses: actions/setup-java@v5 # скачать Java
         with:
           distribution: 'microsoft'
           java-version: '17'
