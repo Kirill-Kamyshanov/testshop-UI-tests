@@ -1,6 +1,6 @@
 # Рабочая версия без тренда
 
-name: Python autotests
+name: не запускать
 
 on:
   workflow_dispatch:
