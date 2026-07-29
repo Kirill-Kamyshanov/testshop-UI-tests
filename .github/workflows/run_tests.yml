@@ -63,6 +63,7 @@ jobs:
   publish-report:
     name: Report publication
     runs-on: ubuntu-latest
+    needs: run-tests
     steps:
     - name: Download artifacts # скачать артефакт с прошлого степа
       uses: actions/download-artifact@v8
