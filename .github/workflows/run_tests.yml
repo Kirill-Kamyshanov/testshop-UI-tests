@@ -57,12 +57,12 @@ jobs:
       - name: Install allure
         run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.44.0/allure-2.44.0.tgz && sudo tar -zxvf allure-2.44.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.44.0/bin/allure /usr/bin/allure
       - name: Generate report
-        run: allure generate -c allure-results -o _site # название вместо allure-report чтобы проще было публиковать на github Pages
+        run: allure generate -c allure-results -o allure-report # название вместо allure-report чтобы проще было публиковать на github Pages
       - name: save allure report
         uses: actions/upload-artifact@v7 # экшен делает так, чтобы артефакты остались после запуска джобы (будут доступны к скачиванию на UI)
         with:
-          name: _site
-          path: _site
+          name: allure-report
+          path: allure-report
           retention-days: 1
 
   publish-report:
@@ -73,13 +73,13 @@ jobs:
     - name: Download artifacts # скачать артефакт с прошлого степа
       uses: actions/download-artifact@v8
       with: # 1
-        name: _site
-        path: ./_site
+        name: allure-report
+        path: ./allure-report
 
     - name: Upload Pages artifact # эти два степа публикуют этот артефакт на github Pages
       uses: actions/upload-pages-artifact@v3
       with: # 2
-        path: ./_site
+        path: ./allure-report
 
     - name: Deploy to Github Pages
       id: deployment
