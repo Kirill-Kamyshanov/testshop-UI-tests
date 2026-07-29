@@ -31,13 +31,13 @@ jobs:
         run: pytest
       - name: run smoke tests
         if: "github.event.inputs.deployment_target == 'smoke'"
-        run: pytest
+        run: pytest -m smoke
       - name: run regression tests
         if: "github.event.inputs.deployment_target == 'regression'"
-        run: pytest
+        run: pytest -m regression
       - name: run extended tests
         if: "github.event.inputs.deployment_target == 'extended'"
-        run: pytest
+        run: pytest -m extended
 
 
 # Создаем файл в .github/workflows/python-app.yml
