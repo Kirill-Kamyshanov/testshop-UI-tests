@@ -72,9 +72,15 @@ jobs:
     steps:
     - name: Download artifacts # скачать артефакт с прошлого степа
       uses: actions/download-artifact@v8
+      with:
+        name: _site
+        path: ./_site
 
     - name: Upload Pages artifact # эти два степа публикуют этот артефакт на github Pages
       uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./_site
+
     - name: Deploy to Github Pages
       id: deployment
       uses: actions/deploy-pages@v4
